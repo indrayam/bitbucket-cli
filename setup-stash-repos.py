@@ -23,7 +23,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Repo Deleted]")
@@ -36,7 +36,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Repo Created]")
@@ -48,7 +48,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Delete Repo Locally]")
@@ -60,7 +60,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Repo Cloned]")
@@ -72,7 +72,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[CDD Base Code Added]")
@@ -84,7 +84,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Git Add complete]")
@@ -96,7 +96,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Git Commit complete]")
@@ -108,7 +108,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Git Push complete]")
@@ -121,7 +121,7 @@ def create_repo(ulist, encpwd):
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output)
+        print(output.decode('utf-8'), end='')
         if rc > 0:
             print(err)
         print(count, ":", user, "[Change Branch Permissions complete]")
@@ -135,11 +135,11 @@ def folder_path(leaf, user):
     """
     path = ''
     if leaf == 'repo':
-        path += '/Users/anand/workspace/_python_/python-projects/stash-cli/tmp/' + reponame(user)
+        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/tmp/' + reponame(user)
     elif leaf == 'repo_parent':
-        path += '/Users/anand/workspace/_python_/python-projects/stash-cli/tmp/'
+        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/tmp/'
     elif leaf == 'home':
-        path += '/Users/anand/workspace/_python_/python-projects/stash-cli/'
+        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/'
 
     return path
 
@@ -157,16 +157,15 @@ if __name__ == "__main__":
         print('Usage: {} password'.format(sys.argv[0]))
         sys.exit(1)
     else:
+        # You did not think I was going to give you the password that easy ;-)
         encoded_password = sys.argv[1]
-        userlist = ['aashesh', 'adeo', 'akalbag', 'alamsden', 'amandapa', 'amviswa', 'anasharm', 'anilsane', 'anobansa',
-                    'apaldhik', 'arganesa', 'asalehif', 'asnigam', 'atushah', 'avijayku', 'azsivara', 'bhargoel',
-                    'chuck',
-                    'cmallik', 'debajdas', 'dhsanghv', 'gakhande', 'gsayani', 'hyurko', 'jalagars', 'jehrhard',
-                    'jkalapal',
-                    'kdass', 'kemathew', 'kunkotha', 'lanmorga', 'mavaghel', 'mavlcek', 'mchittur', 'mesmith2',
-                    'mvaidya',
-                    'nvad', 'pagupta2', 'papadman', 'pathimoo', 'pvallala', 'samhua', 'sammiset', 'saruswam', 'shabbu',
-                    'shrdeshp', 'sikamala', 'sipadman', 'sirath', 'sjamwal', 'srparigi', 'ssabbise', 'ssaiboya',
-                    'sujjosep',
-                    'tccooper', 'vivekse', 'yogyadav']
+
+        # Read the list of trainees from the external text file
+        f = open('trainees.txt', 'r')
+        userlist = []
+        for line in f:
+            userlist.append(line.rstrip())
+        f.close()
+
+        # Let's create the repos, shall we?
         create_repo(userlist, encoded_password)
