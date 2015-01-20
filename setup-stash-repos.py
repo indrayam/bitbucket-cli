@@ -25,7 +25,7 @@ def create_repo(ulist, encpwd):
         rc = p.returncode
         print(output.decode('utf-8'), end='')
         if rc > 0:
-            print(err)
+            print(err.decode('utf-8'), end='')
         print(count, ":", user, "[Repo Deleted]")
 
         # Create the Repo
