@@ -72,7 +72,7 @@ if __name__ == "__main__":
         encoded_password = sys.argv[1]
 
         # Read the list of trainees from the external text file
-        f = open('trainees.txt', 'r')
+        f = open('trainees-all.txt', 'r')
         userlist = []
         for line in f:
             userlist.append(line.rstrip())
