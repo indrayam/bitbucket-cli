@@ -10,121 +10,172 @@ def create_repo(ulist, encpwd):
     :param encpwd: Encoded password for Stash
     :return: None
     """
+
+    # Set clean_existing_repos value based on your training needs. By default it will NOT delete existing repos
+    clean_existing_repos = False
     count = 0
+    count_new = 0
+    non_existent_user = []
     password = codecs.decode(encpwd, 'rot_13')
     for user in ulist:
         count += 1
 
-        # Delete the Repo
+        # Does the user exist? This is ONLY required for reporting if the end user will be able to access Stash
         cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + \
-              ' -a deleteRepository --project TTT -r ' + reponame(user)
+              ' -a getUser --userId ' + user
         args = shlex.split(cmd)
         p = Popen(args,
                   stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
         output, err = p.communicate()
         rc = p.returncode
-        print(output.decode('utf-8'), end='')
         if rc > 0:
+            non_existent_user += [user]
             print(err.decode('utf-8'), end='')
-        print(count, ":", user, "[Repo Deleted]")
+            print('-' * 50)
+        else:
+            print(output.decode('utf-8'), end='')
+            print(count, ":", user, "[User Exist check complete]")
+            print('-' * 50)
 
-        # Create the Repo
-        cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + ' -a createRepository ' + \
-              '--project TTT -r ' + reponame(user)
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Repo Created]")
+        # Delete the Repo
+        if clean_existing_repos:
+            cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + \
+                  ' -a deleteRepository --project TTT -r ' + reponame(user)
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err.decode('utf-8'), end='')
+            print(count, ":", user, "[Repo Deleted]")
 
-        # Delete Repo Locally
-        cmd = 'rm -rf ' + reponame(user)
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Delete Repo Locally]")
+        # Set the default value of repo_exist to False. Meaning create the repo if it does not exist
+        repo_exist = False
 
-        # Clone the Repo
-        cmd = 'git clone ssh://git@gitscm.cisco.com/ttt/' + reponame(user) + '.git'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Repo Cloned]")
+        # Check repo_exist iff clean_existing_repos setting is False
+        if not clean_existing_repos:
+            cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + \
+                  ' -a getRepository --project TTT -r ' + reponame(user)
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            if rc > 0:
+                print(err.decode('utf-8'), end='')
+            else:
+                repo_exist = True
+                print(output.decode('utf-8'), end='')
+                print(count, ":", user, "[Repo check complete]")
 
-        # Add CDD to the Repo
-        cmd = 'cp -r /tmp/cdd/ .'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[CDD Base Code Added]")
+        # Do the next steps iff repo_exist is False
+        if not repo_exist:
+            count_new += 1
+            cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + ' -a createRepository ' + \
+                  '--project TTT -r ' + reponame(user)
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Repo Created]")
 
-        # Git Add
-        cmd = 'git add .'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Git Add complete]")
+            # Delete Repo Locally
+            cmd = 'rm -rf ' + reponame(user)
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Delete Repo Locally]")
 
-        # Git Commit
-        cmd = 'git commit -m "Initial Commit"'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Git Commit complete]")
+            # Clone the Repo
+            cmd = 'git clone ssh://git@gitscm.cisco.com/ttt/' + reponame(user) + '.git'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo_parent', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Repo Cloned]")
 
-        # Git Push
-        cmd = 'git push origin master'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Git Push complete]")
+            # Add CDD to the Repo
+            cmd = 'cp -r /tmp/cdd/ .'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[CDD Base Code Added]")
 
-        # Change Branch Permissions
-        cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + ' -a grantBranchPermissions' + \
-              ' --project TTT -r ' + reponame(user) + ' --branch master --type PATTERN --group stash-sdaas-admins'
-        args = shlex.split(cmd)
-        p = Popen(args,
-                  stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
-        output, err = p.communicate()
-        rc = p.returncode
-        print(output.decode('utf-8'), end='')
-        if rc > 0:
-            print(err)
-        print(count, ":", user, "[Change Branch Permissions complete]")
+            # Git Add
+            cmd = 'git add .'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Git Add complete]")
+
+            # Git Commit
+            cmd = 'git commit -m "Initial Commit"'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Git Commit complete]")
+
+            # Git Push
+            cmd = 'git push origin master'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Git Push complete]")
+
+            # Change Branch Permissions
+            cmd = './stash.sh -s https://gitscm.cisco.com -u automation -p ' + password + ' -a grantBranchPermissions' + \
+                  ' --project TTT -r ' + reponame(user) + ' --branch master --type PATTERN --group stash-sdaas-admins'
+            args = shlex.split(cmd)
+            p = Popen(args,
+                      stdout=PIPE, stderr=PIPE, cwd=folder_path('home', user))
+            output, err = p.communicate()
+            rc = p.returncode
+            print(output.decode('utf-8'), end='')
+            if rc > 0:
+                print(err)
+            print(count, ":", user, "[Change Branch Permissions complete]")
+        else:
+            print('-' * 75)
+            print("Skipping processing for", user, "since the repo", reponame(user), "already exists")
+            print('-' * 75)
+
+    # Wrap up
+    final_wrap_up(non_existent_user, count, count_new)
 
 
 def folder_path(leaf, user):
@@ -150,6 +201,22 @@ def reponame(userid):
     :return: Repo Name (append -ttt to the UserID passed)
     """
     return userid + '-ttt'
+
+
+def final_wrap_up(nousrlist, c, c_new):
+    f = open('/tmp/non-existent-users.txt', 'w')
+    count = 0
+    for user in nousrlist:
+        count += 1
+        f.write(user + '\n')
+    f.close()
+    print()
+    print('+' * 100)
+    print("Number of total users in the input file:", c)
+    print("Number of users from total users whose repo got created during this run:", c_new)
+    print("Number of users that do not exist in Atlassian Stash:", count)
+    print("\tFor more information, see /tmp/non-existent-users.txt file")
+    print('+' * 100)
 
 
 if __name__ == "__main__":

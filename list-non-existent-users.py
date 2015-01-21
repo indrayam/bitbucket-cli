@@ -4,7 +4,7 @@ import sys
 from subprocess import Popen, PIPE
 
 
-def create_repo(ulist, encpwd):
+def find_non_existent_users(ulist, encpwd):
     """
     :param ulist: List of users
     :param encpwd: Encoded password for Stash
@@ -34,17 +34,28 @@ def create_repo(ulist, encpwd):
             print('-' * 50)
 
     # Spit out all the non existent users into a file
-    non_existent_user_dump(non_existent_user)
+    dump_non_existent_users(non_existent_user)
 
-def non_existent_user_dump(nousrlist):
+
+def dump_non_existent_users(nousrlist):
     f = open('/tmp/non-existent-users.txt', 'w')
     count = 0
     for user in nousrlist:
         count += 1
         f.write(user + '\n')
     f.close()
+    print()
     print(count, "number of users do not exist in Atlassian Stash")
     print("For more information, see non-existent-users.txt file")
+
+
+def reponame(userid):
+    """
+    :param userid: User ID
+    :return: Repo Name (append -ttt to the UserID passed)
+    """
+    return userid + '-ttt'
+
 
 def folder_path(leaf, user):
     """
@@ -79,4 +90,4 @@ if __name__ == "__main__":
         f.close()
 
         # Let's create the repos, shall we?
-        create_repo(userlist, encoded_password)
+        find_non_existent_users(userlist, encoded_password)
