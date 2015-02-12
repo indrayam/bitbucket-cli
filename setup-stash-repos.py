@@ -1,6 +1,7 @@
 import codecs
 import shlex
 import sys
+import os
 from subprocess import Popen, PIPE
 
 
@@ -12,7 +13,7 @@ def create_repo(ulist, encpwd):
     """
 
     # Set clean_existing_repos value based on your training needs. By default it will NOT delete existing repos
-    clean_existing_repos = True
+    clean_existing_repos = False
     count = 0
     count_new = 0
     non_existent_user = []
@@ -184,13 +185,14 @@ def folder_path(leaf, user):
     :param user: User Id
     :return: Folder Path to be used as current working directory
     """
-    path = ''
+    path = os.getcwd()
     if leaf == 'repo':
-        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/tmp/' + reponame(user)
+        path += '/tmp/' + reponame(user)
     elif leaf == 'repo_parent':
-        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/tmp/'
-    elif leaf == 'home':
-        path += '/Users/anand/workspace/_python_/python-projects/ttt-stash-cli/'
+        path += '/tmp/'
+        if not os.path.isdir(path):
+            print(path, "does not exist. Creating folder", path)
+            os.mkdir(path)
 
     return path
 
