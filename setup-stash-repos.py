@@ -13,7 +13,7 @@ def create_repo(ulist, encpwd):
     """
 
     # Set clean_existing_repos value based on your training needs. By default it will NOT delete existing repos
-    clean_existing_repos = False
+    clean_existing_repos = True
     count = 0
     count_new = 0
     non_existent_user = []
@@ -111,7 +111,8 @@ def create_repo(ulist, encpwd):
             print(count, ":", user, "[Repo Cloned]")
 
             # Add CDD to the Repo
-            cmd = 'cp -r /tmp/cdd/ .'
+            cddpath = os.getcwd() + '/tmp/cdd/'
+            cmd = 'cp -r ' + cddpath + ' .'
             args = shlex.split(cmd)
             p = Popen(args,
                       stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
