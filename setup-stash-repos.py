@@ -231,6 +231,10 @@ if __name__ == "__main__":
         encoded_password = sys.argv[1]
 
         # Read the list of trainees from the external text file
+        trainees_file = os.getcwd() + '/trainees.txt'
+        if not os.path.isfile(trainees_file):
+            print(path, "does not exist. Exiting..")
+            sys.exit(1)
         f = open('trainees.txt', 'r')
         userlist = []
         for line in f:
