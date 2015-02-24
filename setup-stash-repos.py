@@ -13,7 +13,7 @@ def create_repo(ulist, encpwd):
     """
 
     # Set clean_existing_repos value based on your training needs. By default it will NOT delete existing repos
-    clean_existing_repos = True
+    clean_existing_repos = False
     count = 0
     count_new = 0
     non_existent_user = []
