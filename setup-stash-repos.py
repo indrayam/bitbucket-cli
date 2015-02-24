@@ -2,6 +2,7 @@ import codecs
 import shlex
 import sys
 import os
+import glob
 from subprocess import Popen, PIPE
 
 
@@ -13,7 +14,7 @@ def create_repo(ulist, encpwd):
     """
 
     # Set clean_existing_repos value based on your training needs. By default it will NOT delete existing repos
-    clean_existing_repos = False
+    clean_existing_repos = True
     count = 0
     count_new = 0
     non_existent_user = []
@@ -111,9 +112,9 @@ def create_repo(ulist, encpwd):
             print(count, ":", user, "[Repo Cloned]")
 
             # Add CDD to the Repo
-            cddpath = os.getcwd() + '/tmp/cdd/'
-            cmd = 'cp -r ' + cddpath + ' .'
-            args = shlex.split(cmd)
+            files1 = glob.glob(os.getcwd() + "/tmp/cdd/" + ".*")
+            files2 = glob.glob(os.getcwd() + "/tmp/cdd/" + "*")
+            args = ['cp', '-r'] +  files1 + files2 + ['.']
             p = Popen(args,
                       stdout=PIPE, stderr=PIPE, cwd=folder_path('repo', user))
             output, err = p.communicate()
