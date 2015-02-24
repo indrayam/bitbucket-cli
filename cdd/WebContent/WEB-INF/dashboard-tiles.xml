@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+
+<tiles-definitions>
+
+	<definition name="login" template="/WEB-INF/views/login.jsp"/>
+    
+    <definition name="defaultRedirect" template="/WEB-INF/views/defaultRedirect.jsp"/>
+    
+    <definition name="error" template="/WEB-INF/views/error.jsp">  
+    </definition>
+    
+    <definition name="defaultTemplate" template="/WEB-INF/layouts/userMain.jsp">
+    	<put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/layouts/_userHeader.jsp" />
+        <put-attribute name="leftNavigation" value="/WEB-INF/layouts/_userLeftNavigation.jsp" />
+		<put-attribute name="body" value="" />
+		<put-attribute name="footer" value="/WEB-INF/layouts/_userFooter.jsp" />   
+    </definition>
+    
+    <definition name="listGroup" extends="defaultTemplate">
+        <put-attribute name="title" value="Group List" />
+        <put-attribute name="header" value="/WEB-INF/layouts/_userHeaderMain.jsp" />
+        <put-attribute name="leftNavigation" value="/WEB-INF/layouts/_userLeftNavigationDisabled.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/listGroup.jsp" />
+    </definition>
+    
+    <definition name="listTrack" extends="defaultTemplate">
+        <put-attribute name="title" value="Track List" />
+        <put-attribute name="body" value="/WEB-INF/views/listTrack.jsp" />
+    </definition>
+    
+     <definition name="listSubTrack" extends="defaultTemplate">
+        <put-attribute name="title" value="SubTrack List" />
+        <put-attribute name="body" value="/WEB-INF/views/listSubTrack.jsp" />
+    </definition>
+    
+    <definition name="listProject" extends="defaultTemplate">
+        <put-attribute name="title" value="Project List" />
+        <put-attribute name="body" value="/WEB-INF/views/listProject.jsp" />
+    </definition>
+    
+    <definition name="viewProject" extends="defaultTemplate">
+        <put-attribute name="title" value="Project" />
+        <put-attribute name="body" value="/WEB-INF/views/viewProject.jsp" />
+    </definition>
+    
+     <definition name="viewProjectOrphan" extends="defaultTemplate">
+        <put-attribute name="title" value="Project" />
+        <put-attribute name="body" value="/WEB-INF/views/viewProjectOrphan.jsp" />
+    </definition>
+    
+     <definition name="trends" extends="defaultTemplate">
+        <put-attribute name="title" value="Trends" />
+        <put-attribute name="body" value="/WEB-INF/views/trends.jsp" />
+    </definition>
+    
+    <definition name="standards" extends="defaultTemplate">
+        <put-attribute name="title" value="Standards" />
+        <put-attribute name="header" value="/WEB-INF/layouts/_userHeaderMain.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/standards.jsp" />
+        <put-attribute name="leftNavigation" value="/WEB-INF/layouts/_userLeftNavigationDisabled.jsp" />
+    </definition>
+    
+    <definition name="usageMetrics" extends="defaultTemplate">
+		<put-attribute name="title" value="Adoption Metrics" />
+		<put-attribute name="header" value="/WEB-INF/layouts/_userHeaderMain.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/usageMetrics.jsp" />
+		<put-attribute name="leftNavigation" value="/WEB-INF/layouts/_userLeftNavigationDisabled.jsp" />
+	</definition>
+	
+    <definition name="developerMetrics" extends="defaultTemplate">
+		<put-attribute name="title" value="Developer Metrics" />
+		<put-attribute name="header" value="/WEB-INF/layouts/_userHeaderMain.jsp" />
+		<put-attribute name="body" value="/WEB-INF/views/listDeveloperMetrics.jsp" />
+		<put-attribute name="leftNavigation" value="/WEB-INF/layouts/_userLeftNavigationDisabled.jsp" />
+	</definition>
+    
+</tiles-definitions>
