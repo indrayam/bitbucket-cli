@@ -233,7 +233,8 @@ if __name__ == "__main__":
         # Read the list of trainees from the external text file
         trainees_file = os.getcwd() + '/trainees.txt'
         if not os.path.isfile(trainees_file):
-            print(path, "does not exist. Please create the trainees.txt file in the current dir before proceeding.")
+            print(trainees_file,
+                  "does not exist. Please create the trainees.txt file in the current dir before proceeding.")
             print("Exiting..")
             sys.exit(1)
         f = open('trainees.txt', 'r')
