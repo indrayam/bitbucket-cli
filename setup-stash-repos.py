@@ -111,7 +111,7 @@ def create_repo(ulist, encpwd):
             print(count, ":", user, "[Repo Cloned]")
 
             # Add CDD to the Repo
-            cddpath = os.getcwd() + '/tmp/cdd/*'
+            cddpath = os.getcwd() + '/tmp/cdd/'
             cmd = 'cp -r ' + cddpath + ' .'
             args = shlex.split(cmd)
             p = Popen(args,
